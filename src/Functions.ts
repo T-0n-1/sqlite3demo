@@ -80,6 +80,7 @@ export function insertTestData(db: Database) {
 }
 
 export function runQueries(db: Database) {
+  // Query 1 with left join
   const query = `SELECT 
       he.hero_id AS hero_id,
       he.hero_name AS hero_name,
@@ -88,18 +89,43 @@ export function runQueries(db: Database) {
       he.was_snapped AS was_snapped
     FROM Hero he
     LEFT JOIN Hero_power hp ON he.hero_id = hp.hero_id`;
-  console.log("db.all() result (with LEFT JOIN): ");
+  console.log("db.each() result (with LEFT JOIN): ");
   db.serialize(() => {
-    db.all(query, (err: Error | null, rows: HeroWithPowers[]) => {
+    db.each(query, (err: Error | null, row: HeroWithPowers) => {
       if (err) {
         console.error(err.message);
         throw err;
       }
-      rows.forEach((row) => {
-        console.log(
-          `ID: ${row.hero_id}, Name: ${row.hero_name}, Heropower: ${row.hero_power}, Is Xman: ${row.is_xman}, Was Snapped: ${row.was_snapped}`,
-        );
-      });
+      console.log(
+        `ID: ${row.hero_id}, Name: ${row.hero_name}, Heropower: ${row.hero_power}, Is Xman: ${row.is_xman}, Was Snapped: ${row.was_snapped}`,
+      );
     });
+  });
+
+  // Query 2 with inner join and where clause
+  const query2 = `SELECT 
+      he.hero_name AS hero_name,
+      hp.hero_power AS hero_power,
+      he.is_xman AS is_xman,
+      he.was_snapped AS was_snapped
+      FROM Hero he
+      INNER JOIN Hero_power hp ON he.hero_id = hp.hero_id
+      WHERE he.was_snapped = ?`;
+  const queryCondition: boolean = true;
+  console.log("db.each() result (with INNER JOIN and WHERE clause): ");
+  db.serialize(() => {
+    db.each(
+      query2,
+      [queryCondition],
+      (err: Error | null, row: HeroWithPowers) => {
+        if (err) {
+          console.error(err.message);
+          throw err;
+        }
+        console.log(
+          `Name: ${row.hero_name}, Heropower: ${row.hero_power}, Is Xman: ${row.is_xman}, Was Snapped: ${row.was_snapped}`,
+        );
+      },
+    );
   });
 }
