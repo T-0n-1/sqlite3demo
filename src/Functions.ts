@@ -55,22 +55,25 @@ export async function initializeDatabase() {
 }
 
 export function insertTestData(db: Database) {
-  db.serialize(() => {
-    db.run(`INSERT INTO Hero (hero_id, hero_name, is_xman, was_snapped)
+  db.exec(
+    `INSERT INTO Hero (hero_id, hero_name, is_xman, was_snapped)
       VALUES
       (1, 'Wolverine', true, true),
       (2, 'Cyclops', true, false),
       (3, 'Jean Grey', true, true),
       (4, 'Storm', true, false),
       (5, 'Beast', true, true),
-      (6, 'Professor X', true, false);`);
-    db.run(`INSERT INTO Hero_power (hero_id, hero_power)
+      (6, 'Professor X', true, false);
+      INSERT INTO Hero_power (hero_id, hero_power)
       VALUES
       (1, 'Regeneration'),
       (2, 'Optic Blast'),
       (3, 'Telekinesis'),
       (4, 'Weather Control'),
       (5, 'Super Strength'),
-      (6, 'Telepathy');`);
-  });
+      (6, 'Telepathy');`,
+    (err) => {
+      if (err) console.error(err.message);
+    },
+  );
 }
