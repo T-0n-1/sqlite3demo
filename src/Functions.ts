@@ -42,7 +42,7 @@ function createTables(dataBase: Database): void {
   }
 }
 
-async function initializeDatabase() {
+export async function initializeDatabase() {
   try {
     db = await dbConnect(dbFile); // Assign db after the connection is established
     createTables(db); // Create tables
@@ -54,4 +54,23 @@ async function initializeDatabase() {
   }
 }
 
-export { initializeDatabase };
+export function insertTestData(db: Database) {
+  db.serialize(() => {
+    db.run(`INSERT INTO Hero (hero_id, hero_name, is_xman, was_snapped)
+      VALUES
+      (1, 'Wolverine', true, true),
+      (2, 'Cyclops', true, false),
+      (3, 'Jean Grey', true, true),
+      (4, 'Storm', true, false),
+      (5, 'Beast', true, true),
+      (6, 'Professor X', true, false);`);
+    db.run(`INSERT INTO Hero_power (hero_id, hero_power)
+      VALUES
+      (1, 'Regeneration'),
+      (2, 'Optic Blast'),
+      (3, 'Telekinesis'),
+      (4, 'Weather Control'),
+      (5, 'Super Strength'),
+      (6, 'Telepathy');`);
+  });
+}
