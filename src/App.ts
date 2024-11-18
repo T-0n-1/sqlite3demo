@@ -1,10 +1,6 @@
-import dotenv from "dotenv";
-// import sqlite3, { Database } from "sqlite3";
-import { connectAndCreate } from "./Functions";
-// import type { Hero, Hero_power } from "./Interfaces";
+import { initializeDatabase } from "./Functions";
 
-dotenv.config();
-
-const dbFile = process.env.DATABASEPATH || "db.sqlite";
-
-connectAndCreate(dbFile);
+(async () => {
+  const db = await initializeDatabase();
+  console.log(db); // Making sure db is up before proceeding
+})();
