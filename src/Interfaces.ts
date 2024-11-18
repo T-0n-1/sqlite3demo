@@ -9,3 +9,5 @@ export interface Hero_power {
   hero_id: number;
   hero_power: string;
 }
+
+export interface HeroWithPowers extends Hero, Hero_power {}

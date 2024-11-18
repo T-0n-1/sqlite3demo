@@ -1,5 +1,6 @@
 import { Database } from "sqlite3";
 import dotenv from "dotenv";
+import type { HeroWithPowers } from "./Interfaces";
 
 dotenv.config();
 
@@ -42,11 +43,11 @@ function createTables(dataBase: Database): void {
   }
 }
 
+// async function for initializing connecction and creating tables
 export async function initializeDatabase() {
   try {
     db = await dbConnect(dbFile); // Assign db after the connection is established
     createTables(db); // Create tables
-    console.log("Database initialized and returned successfully");
     return db; // Return the database instance
   } catch {
     console.error("Error initializing the database");
@@ -76,4 +77,29 @@ export function insertTestData(db: Database) {
       if (err) console.error(err.message);
     },
   );
+}
+
+export function runQueries(db: Database) {
+  const query = `SELECT 
+      he.hero_id AS hero_id,
+      he.hero_name AS hero_name,
+      hp.hero_power AS hero_power,
+      he.is_xman AS is_xman,
+      he.was_snapped AS was_snapped
+    FROM Hero he
+    LEFT JOIN Hero_power hp ON he.hero_id = hp.hero_id`;
+  console.log("db.all() result (with LEFT JOIN): ");
+  db.serialize(() => {
+    db.all(query, (err: Error | null, rows: HeroWithPowers[]) => {
+      if (err) {
+        console.error(err.message);
+        throw err;
+      }
+      rows.forEach((row) => {
+        console.log(
+          `ID: ${row.hero_id}, Name: ${row.hero_name}, Heropower: ${row.hero_power}, Is Xman: ${row.is_xman}, Was Snapped: ${row.was_snapped}`,
+        );
+      });
+    });
+  });
 }

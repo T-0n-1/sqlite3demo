@@ -1,7 +1,8 @@
-import { initializeDatabase, insertTestData } from "./Functions";
+import { initializeDatabase, insertTestData, runQueries } from "./Functions";
 
 (async () => {
   const db = await initializeDatabase();
-  console.log(db); // Making sure db is up before proceeding
+  console.log(`Database is connected: ${db !== undefined}`); // Making sure db is up before proceeding
   insertTestData(db);
+  runQueries(db);
 })();
