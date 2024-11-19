@@ -37,9 +37,8 @@ function createTables(dataBase: Database): void {
                 )`);
     });
     console.log("Tables created successfully");
-  } catch {
-    console.log("Unable to create tables");
-    throw new Error(); // Exit the program
+  } catch (error) {
+    console.log("Unable to create tables", error);
   }
 }
 
